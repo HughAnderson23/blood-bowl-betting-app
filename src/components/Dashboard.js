@@ -39,7 +39,7 @@ const Dashboard = () => {
   const handleBet = async () => {
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/bets',
+        'http://localhost:5000/api/user/bets',
         { matchId: selectedMatch, team: selectedTeam, amount: betAmount },
         { headers: { 'x-auth-token': localStorage.getItem('token') } }
       );
