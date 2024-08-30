@@ -1,19 +1,21 @@
 import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useContext(AuthContext);
+  const navigate = useNavigate();  // Initialize useNavigate
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await login(username, password);
-      // Redirect or show success message
+      navigate('/dashboard');  // Redirect to the dashboard on successful login
     } catch (error) {
       console.error(error);
-      // Show error message
+      // Optionally, handle errors (e.g., show a notification or message)
     }
   };
 
@@ -21,11 +23,19 @@ const Login = () => {
     <form onSubmit={handleSubmit}>
       <div>
         <label>Username</label>
-        <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
       </div>
       <div>
         <label>Password</label>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
       </div>
       <button type="submit">Login</button>
     </form>
@@ -33,3 +43,4 @@ const Login = () => {
 };
 
 export default Login;
+

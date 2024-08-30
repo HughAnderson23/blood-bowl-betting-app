@@ -1,19 +1,21 @@
 import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';  // Import useNavigate
 import AuthContext from '../context/AuthContext';
 
 const Register = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { register } = useContext(AuthContext);
+  const navigate = useNavigate();  // Initialize useNavigate
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await register(username, password);
-      // Redirect or show success message
+      navigate('/login');  // Redirect to the login page on successful registration
     } catch (error) {
       console.error(error);
-      // Show error message
+      // Optionally, handle errors (e.g., show a notification or message)
     }
   };
 
@@ -33,3 +35,4 @@ const Register = () => {
 };
 
 export default Register;
+

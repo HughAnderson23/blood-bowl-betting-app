@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
-import AuthContext from '../context/AuthContext';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
+import AuthContext from '../context/AuthContext';
 
 const Dashboard = () => {
   const { user, logout } = useContext(AuthContext);
@@ -10,38 +10,39 @@ const Dashboard = () => {
   const [selectedTeam, setSelectedTeam] = useState('');
   const [betAmount, setBetAmount] = useState(0);
 
+  const fetchSkulls = useCallback(async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/user/skulls', {
+        headers: { 'x-auth-token': localStorage.getItem('token') },
+      });
+      setSkulls(response.data.skulls);
+    } catch (error) {
+      console.error('Error fetching skulls:', error);
+    }
+  }, [setSkulls]);
+
+  const fetchMatches = useCallback(async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/matches');
+      setMatches(response.data);
+    } catch (error) {
+      console.error('Error fetching matches:', error);
+    }
+  }, [setMatches]);
+
   useEffect(() => {
-    const fetchSkulls = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/user/skulls', {
-          headers: { 'x-auth-token': localStorage.getItem('token') },
-        });
-        setSkulls(response.data.skulls);
-      } catch (error) {
-        console.error('Error fetching skulls:', error);
-      }
-    };
-
-    const fetchMatches = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/matches');
-        setMatches(response.data);
-      } catch (error) {
-        console.error('Error fetching matches:', error);
-      }
-    };
-
+    
     fetchSkulls();
     fetchMatches();
-  }, []);
+  }, [fetchSkulls, fetchMatches]); // Now including dependencies
 
   const handleBet = async () => {
     try {
       const response = await axios.post(
         'http://localhost:5000/api/bets',
         { matchId: selectedMatch, team: selectedTeam, amount: betAmount },
-        { headers: { 'x-auth-token': localStorage.getItem('token') }
-      });
+        { headers: { 'x-auth-token': localStorage.getItem('token') } }
+      );
       alert(`Bet placed on ${selectedTeam} for ${betAmount} skulls!`);
       setSkulls(response.data.updatedSkulls);
     } catch (error) {
