@@ -1,9 +1,12 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import AuthContext from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+
 
 const Dashboard = () => {
   const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();  
   const [skulls, setSkulls] = useState(0);
   const [matches, setMatches] = useState([]);
   const [selectedMatch, setSelectedMatch] = useState('');
@@ -20,6 +23,11 @@ const Dashboard = () => {
       console.error('Error fetching skulls:', error);
     }
   }, [setSkulls]);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');  // Navigate to the home page after logout
+  };
 
   const fetchMatches = useCallback(async () => {
     try {
@@ -56,7 +64,7 @@ const Dashboard = () => {
       <h2>Dashboard</h2>
       <p>Welcome, {user?.username}!</p>
       <p>You have {skulls} skulls.</p>
-      <button onClick={logout}>Logout</button>
+      <button onClick={handleLogout}>Logout</button>
 
       <h3>Place a Bet</h3>
       <select value={selectedMatch} onChange={(e) => setSelectedMatch(e.target.value)}>
